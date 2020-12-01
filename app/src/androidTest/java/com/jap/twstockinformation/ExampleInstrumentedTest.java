@@ -18,9 +18,9 @@ import static org.junit.Assert.*;
 @RunWith(AndroidJUnit4.class)
 public class ExampleInstrumentedTest {
     static {
-        System.loadLibrary("native-lib");
+        System.loadLibrary("app");
     }
-    public native String GetAllStockNumber();
+//    public native String GetAllStockNumber();
 
     @Test
     public void useAppContext() {
@@ -34,7 +34,7 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         assertEquals("com.jap.twstockinformation", appContext.getPackageName());
-        System.out.println(GetAllStockNumber());
+//        System.out.println(GetAllStockNumber());
     }
 
 }
