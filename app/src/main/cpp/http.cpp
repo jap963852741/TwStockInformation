@@ -39,6 +39,8 @@ size_t write_fn(char* data, size_t size, size_t nmemb, void* user_data) {
 namespace curlssl {
 namespace http {
 
+    std::unique_ptr<CURL, decltype(&curl_easy_cleanup)> curl(curl_easy_init(),curl_easy_cleanup);
+
 Client::Client(const std::string& cacert_path) : cacert_path(cacert_path) {
   curl_global_init(CURL_GLOBAL_DEFAULT);
 }
@@ -54,15 +56,15 @@ std::optional<std::string> Client::get(const std::string& url,
   }
 
 //  CURL *pCurl = NULL;
-  std::unique_ptr<CURL, decltype(&curl_easy_cleanup)> curl(curl_easy_init(),curl_easy_cleanup);
+//  std::unique_ptr<CURL, decltype(&curl_easy_cleanup)> curl(curl_easy_init(),curl_easy_cleanup);
 //  pCurl = curl.get();
   curl_easy_setopt(curl.get(), CURLOPT_HEADER, 0L);  //若启用，会将头文件的信息作为数据流输出
-  curl_slist *pList = NULL;
-  pList = curl_slist_append(pList,"Accept-Encoding:gzip, deflate, sdch");
-  pList = curl_slist_append(pList,"Host:histock.tw");
-  pList = curl_slist_append(pList,"referer:https://histock.tw/stock/3008");
-  curl_easy_setopt(curl.get(), CURLOPT_HTTPHEADER, pList);
-  __android_log_print(ANDROID_LOG_INFO, "lclclc", "curl_easy_perform() failed: %s\n", "1"); //log i类型
+//  curl_slist *pList = NULL;
+//  pList = curl_slist_append(pList,"Accept-Encoding:gzip, deflate, sdch");
+//  pList = curl_slist_append(pList,"Host:histock.tw");
+//  pList = curl_slist_append(pList,"referer:https://histock.tw/stock/3008");
+//  curl_easy_setopt(curl.get(), CURLOPT_HTTPHEADER, pList);
+//  __android_log_print(ANDROID_LOG_INFO, "lclclc", "curl_easy_perform() failed: %s\n", "1"); //log i类型
 
   if (curl == nullptr) {
     *error = "Failed to create CURL object";
@@ -115,9 +117,14 @@ std::optional<std::string> Client::get(const std::string& url,
 
   return buffer;
 }
-void Client::set_header() const {
 
 
+void Client::set_header(const std::string& header_str) const {
+  curl_slist *pList = NULL;
+//  pList = curl_slist_append(pList,"Accept-Encoding:gzip, deflate, sdch");
+//  pList = curl_slist_append(pList,"Host:histock.tw");
+  pList = curl_slist_append(pList,header_str.c_str());
+  curl_easy_setopt(curl.get(), CURLOPT_HTTPHEADER, pList);
 }
 
 

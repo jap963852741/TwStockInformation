@@ -50,8 +50,11 @@ class Client {
   std::optional<std::string> get(const std::string& url,
                                  std::string* error) const;
   void set_header() const;
- private:
+  void set_header(const std::string& url) const;
+
+private:
   const std::string cacert_path;
+
 };
 
 }  // namespace http

@@ -89,8 +89,8 @@ namespace {
 
   std::vector<std::string> get_stock_information(const std::string & cacert_path) {
     std::string error;
-    auto tmp_result = http::Client("/data/user/0/com.jap.twstockinformation/files/cacert.pem");
-
+    auto tmp_result = http::Client(cacert_path);
+    tmp_result.set_header("referer:https://histock.tw/stock/3008");
     auto result = tmp_result.get("https://histock.tw/stock/module/stockdata.aspx?m=stocks&mid=NaN",&error);
     if (!result) {
         return {error.c_str()};
@@ -110,17 +110,22 @@ namespace {
 
 //    __android_log_print(ANDROID_LOG_INFO, "lclclc", "%s",split_string); //log i类型
 
-//        __android_log_print(ANDROID_LOG_INFO, "lclclc", "%s",t.c_str()); //log i类型
      std::vector<std::string> titles;
      std::map<std::string,std::string> final_result;
      for (std::string t : split_string){
          std::string temp_no = "";
          std::string temp_name = "";
+//         __android_log_print(ANDROID_LOG_INFO, "lclclc", "t %s",t.c_str()); //log i类型
          for(std::string temp_t : splitStr2Vec(t,",")){
-             if(temp_t.rfind("No:") == 0){
+//             __android_log_print(ANDROID_LOG_INFO, "lclclc", "temp_t %s",temp_t.c_str()); //log i类型
+//             __android_log_print(ANDROID_LOG_INFO, "lclclc", "temp_t.find(\"No:\") %s",std::to_string(temp_t.find("No:")).c_str()); //log i类型
+
+             if(temp_t.find("No:") == 2){
                  temp_no = replace_all(temp_t,"No:","");
-             } else if(temp_t.rfind("Name:") == 0){
+//                 __android_log_print(ANDROID_LOG_INFO, "lclclc", "No %s",temp_no.c_str()); //log i类型
+             } else if(temp_t.find("Name:") == 1){
                  temp_name = replace_all(temp_t,"Name:","");
+//                 __android_log_print(ANDROID_LOG_INFO, "lclclc", "Name %s",temp_name.c_str()); //log i类型
              }
          }
          final_result[temp_no] = temp_name;
@@ -129,10 +134,11 @@ namespace {
 //         __android_log_print(ANDROID_LOG_INFO, "lclclc", "%s",t.c_str()); //log i类型
 
      }
-      for (auto& [key, value]: final_result) {
 
-          __android_log_print(ANDROID_LOG_INFO, "key", "%s",key.c_str()); //log i类型
-      }
+     for (auto& [key, value]: final_result) {
+         __android_log_print(ANDROID_LOG_INFO, "key", "%s", key.c_str()); //log i类型
+         __android_log_print(ANDROID_LOG_INFO, "value", "%s", value.c_str()); //log i类型
+     }
 
 
 //    Json::Value root;
