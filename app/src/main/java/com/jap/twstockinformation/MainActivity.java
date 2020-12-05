@@ -8,6 +8,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -49,9 +51,15 @@ public class MainActivity extends AppCompatActivity {
         Log.e("MainActivity",result.toString());
         Log.e("MainActivity","123"+result.get("6703"));
         for (String key : result.keySet()) {
-            result.get(key);
-            Log.e("MainActivity","key "+key);
-            Log.e("MainActivity","v "+result.get(key));
+            try {
+                String a_key = URLEncoder. encode(key, "UTF-8").replace("%0D%0D","");
+                Log.e("MainActivity",a_key+""+ a_key.equals("6703"));
+                Log.e("MainActivity","key"+key);
+                Log.e("MainActivity","v"+result.get(key));
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+
 
         }
 
@@ -62,6 +70,5 @@ public class MainActivity extends AppCompatActivity {
      * which is packaged with this application.
      */
 //    public native String stringFromJNI();
-    public native String[] getGerritChanges(String A);
     public native HashMap<String,String> getresult(String CACERT_PATH);
 }
