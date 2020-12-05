@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -44,11 +45,15 @@ public class MainActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        String result = getresult(CACERT_PATH);
-        Log.e("MainActivity",result);
-//        for (int i=0; i <result.length;i++){
-//            Log.e("MainActivity",result[i]);
-//        }
+        HashMap<String,String> result = getresult(CACERT_PATH);
+        Log.e("MainActivity",result.toString());
+        Log.e("MainActivity","123"+result.get("6703"));
+        for (String key : result.keySet()) {
+            result.get(key);
+            Log.e("MainActivity","key "+key);
+            Log.e("MainActivity","v "+result.get(key));
+
+        }
 
     }
 
@@ -58,5 +63,5 @@ public class MainActivity extends AppCompatActivity {
      */
 //    public native String stringFromJNI();
     public native String[] getGerritChanges(String A);
-    public native String getresult(String A);
+    public native HashMap<String,String> getresult(String CACERT_PATH);
 }

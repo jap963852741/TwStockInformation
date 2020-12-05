@@ -87,13 +87,14 @@ namespace {
     return titles;
   }
 
-  std::vector<std::string> get_stock_information(const std::string & cacert_path) {
+    std::map<std::string, std::string> get_stock_information(const std::string & cacert_path) {
     std::string error;
+    std::map<std::string,std::string> final_result;
     auto tmp_result = http::Client(cacert_path);
     tmp_result.set_header("referer:https://histock.tw/stock/3008");
     auto result = tmp_result.get("https://histock.tw/stock/module/stockdata.aspx?m=stocks&mid=NaN",&error);
     if (!result) {
-        return {error.c_str()};
+        return final_result;
     }
     __android_log_print(ANDROID_LOG_INFO, "lclclc", "1"); //log i类型
 
@@ -110,8 +111,6 @@ namespace {
 
 //    __android_log_print(ANDROID_LOG_INFO, "lclclc", "%s",split_string); //log i类型
 
-     std::vector<std::string> titles;
-     std::map<std::string,std::string> final_result;
      for (std::string t : split_string){
          std::string temp_no = "";
          std::string temp_name = "";
@@ -135,10 +134,10 @@ namespace {
 
      }
 
-     for (auto& [key, value]: final_result) {
-         __android_log_print(ANDROID_LOG_INFO, "key", "%s", key.c_str()); //log i类型
-         __android_log_print(ANDROID_LOG_INFO, "value", "%s", value.c_str()); //log i类型
-     }
+//     for (auto& [key, value]: final_result) {
+//         __android_log_print(ANDROID_LOG_INFO, "key", "%s", key.c_str()); //log i类型
+//         __android_log_print(ANDROID_LOG_INFO, "value", "%s", value.c_str()); //log i类型
+//     }
 
 
 //    Json::Value root;
@@ -153,7 +152,7 @@ namespace {
 //        __android_log_print(ANDROID_LOG_INFO, "lclclc", "%s",change.asString().c_str()); //log i类型
 //      titles.push_back(change["No"].asString());
 //    }
-    return titles;
+    return final_result;
   }
 
 
@@ -170,19 +169,36 @@ Java_com_jap_twstockinformation_MainActivity_getGerritChanges(JNIEnv* env,
 
     const std::string cacert =
             curlssl::jni::Convert<std::string>::from(env, cacert_java);
+
     return jni::Convert<jobjectArray, jstring>::from(env,
                                                      get_change_titles(cacert));
 
 }
 
-extern "C" JNIEXPORT jstring JNICALL
+extern "C" JNIEXPORT jobject JNICALL
 Java_com_jap_twstockinformation_MainActivity_getresult(JNIEnv* env
         ,jobject /* this */
         ,jstring cacert_java) {
-  const char* test = "something";
+
   const std::string cacert = curlssl::jni::Convert<std::string>::from(env, cacert_java);
-  get_stock_information(cacert);
-  return (jstring) test;
+  std::map<std::string, std::string> mMap =  get_stock_information(cacert);
+
+  jclass java_cls_HashMap = env->FindClass("java/util/HashMap");
+  jmethodID java_mid_HashMap = env->GetMethodID(java_cls_HashMap, "<init>", "()V");
+  jobject  java_obj_HashMap = env->NewObject(java_cls_HashMap, java_mid_HashMap);
+  jmethodID java_mid_HashMap_put = env->GetMethodID(java_cls_HashMap, "put", "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;");
+  for (auto& [key, value]: mMap) {
+      jstring c_key = env->NewStringUTF(key.c_str());
+      jstring c_value = env->NewStringUTF(value.c_str());
+
+      env->CallObjectMethod(java_obj_HashMap, java_mid_HashMap_put, c_key,c_value);
+
+      env->DeleteLocalRef(c_key);
+      env->DeleteLocalRef(c_value);
+
+  }
+  return java_obj_HashMap;
+
 
 }
 
