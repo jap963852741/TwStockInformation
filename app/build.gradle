@@ -46,7 +46,7 @@ android {
             version "3.10.2"
         }
     }
-    ndkVersion '21.3.6528147'
+//    ndkVersion '21.3.6528147'
 //    21.3.6528147
 }
 configurations.all {
