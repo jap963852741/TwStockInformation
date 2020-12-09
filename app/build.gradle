@@ -1,4 +1,4 @@
-apply plugin: 'com.android.application'
+apply plugin: 'com.android.library'
 apply plugin:'maven' //for gradlew wrapper gradlew install
 
 android {
@@ -6,7 +6,7 @@ android {
     buildToolsVersion "30.0.2"
 
     defaultConfig {
-        applicationId "com.jap.twstockinformation"
+//        applicationId "com.jap.twstockinformation"
         minSdkVersion 25
         targetSdkVersion 30
         versionCode 1
