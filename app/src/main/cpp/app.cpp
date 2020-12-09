@@ -202,5 +202,30 @@ Java_com_jap_twstockinformation_MainActivity_getresult(JNIEnv* env
 
 }
 
+extern "C" JNIEXPORT jobject JNICALL
+Java_com_jap_twstockinformation_StockUtil_getresult(JNIEnv* env
+        ,jobject /* this */
+        ,jstring cacert_java) {
 
+    const std::string cacert = curlssl::jni::Convert<std::string>::from(env, cacert_java);
+    std::map<std::string, std::string> mMap =  get_stock_information(cacert);
+
+    jclass java_cls_HashMap = env->FindClass("java/util/HashMap");
+    jmethodID java_mid_HashMap = env->GetMethodID(java_cls_HashMap, "<init>", "()V");
+    jobject  java_obj_HashMap = env->NewObject(java_cls_HashMap, java_mid_HashMap);
+    jmethodID java_mid_HashMap_put = env->GetMethodID(java_cls_HashMap, "put", "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;");
+    for (auto& [key, value]: mMap) {
+        jstring c_key = env->NewStringUTF(key.c_str());
+        jstring c_value = env->NewStringUTF(value.c_str());
+
+        env->CallObjectMethod(java_obj_HashMap, java_mid_HashMap_put, c_key,c_value);
+
+        env->DeleteLocalRef(c_key);
+        env->DeleteLocalRef(c_value);
+
+    }
+    return java_obj_HashMap;
+
+
+}
 }  // namespace curlssl

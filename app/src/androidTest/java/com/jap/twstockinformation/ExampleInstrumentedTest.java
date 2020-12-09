@@ -25,8 +25,8 @@ public class ExampleInstrumentedTest {
     static {
         System.loadLibrary("app");
     }
-    public native String getresult(String CACERT);
-    public native ArrayList<String> getGerritChanges(String CACERT);
+//    public native String getresult(String CACERT);
+//    public native ArrayList<String> getGerritChanges(String CACERT);
     @Test
     public void useAppContext() {
         // Context of the app under test.
@@ -39,9 +39,11 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         assertEquals("com.jap.twstockinformation", appContext.getPackageName());
-        String CACERT_PATH = appContext.getFilesDir() + File.separator + "cacert.pem";
-        Log.e("CACERT_PATH",CACERT_PATH);
-        System.out.println(getGerritChanges(CACERT_PATH));
+//        String CACERT_PATH = appContext.getFilesDir() + File.separator + "cacert.pem";
+//        Log.e("CACERT_PATH",CACERT_PATH);
+//        System.out.println(getGerritChanges(CACERT_PATH));
+        StockUtil st = new StockUtil(appContext);
+        st.aa();
 
     }
 

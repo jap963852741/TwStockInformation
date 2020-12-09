@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
         String CACERT_PATH = getFilesDir() + File.separator + "cacert.pem";
         try {
             InputStream in = getApplicationContext().getAssets().open("cacert.pem");
-            File outFile = new File(getFilesDir() + File.separator, "cacert.pem");
+            File outFile = new File(CACERT_PATH);
             OutputStream out = new FileOutputStream(outFile);
             byte[] buffer = new byte[1024*5];
             int read;
@@ -48,19 +48,12 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         HashMap<String,String> result = getresult(CACERT_PATH);
-        Log.e("MainActivity",result.toString());
-        Log.e("MainActivity","123"+result.get("6703"));
         for (String key : result.keySet()) {
             try {
                 String a_key = URLEncoder. encode(key, "UTF-8").replace("%0D%0D","");
-                Log.e("MainActivity",a_key+""+ a_key.equals("6703"));
-                Log.e("MainActivity","key"+key);
-                Log.e("MainActivity","v"+result.get(key));
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
-
-
         }
 
     }
