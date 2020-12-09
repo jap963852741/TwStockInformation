@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin:'maven' //for gradlew wrapper gradlew install
 
 android {
     compileSdkVersion 30
@@ -58,6 +59,13 @@ configurations.all {
         }
     }
 }
+allprojects {
+    repositories {
+        jcenter()
+        maven { url "https://jitpack.io" }
+    }
+}
+
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation 'androidx.appcompat:appcompat:1.2.0'
@@ -69,3 +77,8 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 }
+tasks.withType(JavaCompile){
+    options.encoding("UTF-8")
+}
+sourceCompatibility = "1.8"
+targetCompatibility = "1.8"
