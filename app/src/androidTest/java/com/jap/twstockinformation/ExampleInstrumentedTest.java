@@ -36,15 +36,11 @@ public class ExampleInstrumentedTest {
 
     @Test
     public void cpp_test() {
-        // Context of the app under test.
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-//        assertEquals("com.jap.twstockinformation", appContext.getPackageName());
-//        String CACERT_PATH = appContext.getFilesDir() + File.separator + "cacert.pem";
-//        Log.e("CACERT_PATH",CACERT_PATH);
-        System.out.println("123");
         StockUtil st = new StockUtil(appContext);
-        st.aa();
-
+//        st.HashMap_Num_MapPrice();
+//        st.HashMap_Num_MapFundamental();
+        st.HashMap_Num_MapIncome();
     }
 
 }

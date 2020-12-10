@@ -64,28 +64,58 @@ namespace {
     }
 
 
-    std::vector<std::string> get_change_titles(const std::string & cacert_path) {
-    std::string error;
-    auto result = http::Client(cacert_path)
-                      .get(
-                          "http://android-review.googlesource.com/changes/?q=status:open&n=10",
-                          &error);
-    if (!result) {
-      return {error.c_str()};
+    void correctUtfBytes(char* bytes) {
+        char three = 0;
+        while (*bytes != '\0') {
+            unsigned char utf8 = *(bytes++);
+            three = 0;
+            // Switch on the high four bits.
+            switch (utf8 >> 4) {
+                case 0x00:
+                case 0x01:
+                case 0x02:
+                case 0x03:
+                case 0x04:
+                case 0x05:
+                case 0x06:
+                case 0x07:
+                    // Bit pattern 0xxx. No need for any extra bytes.
+                    break;
+                case 0x08:
+                case 0x09:
+                case 0x0a:
+                case 0x0b:
+                case 0x0f:
+                    /*
+                     * Bit pattern 10xx or 1111, which are illegal start bytes.
+                     * Note: 1111 is valid for normal UTF-8, but not the
+                     * modified UTF-8 used here.
+                     */
+                    *(bytes-1) = '?';
+                    break;
+                case 0x0e:
+                    // Bit pattern 1110, so there are two additional bytes.
+                    utf8 = *(bytes++);
+                    if ((utf8 & 0xc0) != 0x80) {
+                        --bytes;
+                        *(bytes-1) = '?';
+                        break;
+                    }
+                    three = 1;
+                    // Fall through to take care of the final byte.
+                case 0x0c:
+                case 0x0d:
+                    // Bit pattern 110x, so there is one additional byte.
+                    utf8 = *(bytes++);
+                    if ((utf8 & 0xc0) != 0x80) {
+                        --bytes;
+                        if(three)--bytes;
+                        *(bytes-1)='?';
+                    }
+                    break;
+            }
+        }
     }
-
-    // Strip XSSI defense prefix:
-    // https://gerrit-review.googlesource.com/Documentation/rest-api.html#output
-    const std::string payload = result.value().substr(5);
-
-    Json::Value root;
-    std::istringstream(payload) >> root;
-    std::vector<std::string> titles;
-    for (const auto& change : root) {
-      titles.push_back(change["subject"].asString());
-    }
-    return titles;
-  }
 
     std::map<std::string, std::string> get_stock_information(const std::string & cacert_path) {
     std::string error;
@@ -155,25 +185,55 @@ namespace {
     return final_result;
   }
 
+    std::string get_stock_price(const std::string & cacert_path) {
+        std::string error;
+        std::string final_result;
+        auto tmp_result = http::Client(cacert_path);
+        auto result = tmp_result.get("https://histock.tw/stock/rank.aspx?p=all",&error);
+        if (!result) {
+            return final_result;
+        }
+        final_result = result.value();
+//        __android_log_print(ANDROID_LOG_INFO, "lclclc", "%s",result.value().c_str()); //log i类型
+        return final_result;
+    }
+
+    std::string get_stock_fundamental(const std::string & cacert_path) {
+        std::string error;
+        std::string final_result;
+        auto tmp_result = http::Client(cacert_path);
+        std::string url = "https://www.twse.com.tw/exchangeReport/BWIBBU_d?response=json&date=&selectType=&_=";
+        std::string unix_time = std::to_string(std::chrono::duration_cast<std::chrono::seconds>(
+                std::chrono::system_clock::now().time_since_epoch()).count());
+        url.append(unix_time);
+//        __android_log_print(ANDROID_LOG_INFO, "lclclc", "%s",url.c_str()); //log i类型
+        auto result = tmp_result.get(url,&error);
+        if (!result) {
+            return final_result;
+        }
+        final_result = result.value();
+//        __android_log_print(ANDROID_LOG_INFO, "lclclc", "%s",result.value().c_str()); //log i类型
+        return final_result;
+    }
+
+    std::string get_stock_income(const std::string & cacert_path) {
+        std::string error;
+        std::string final_result;
+        auto tmp_result = http::Client(cacert_path);
+        tmp_result.set_header("User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (K HTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36");
+        auto result = tmp_result.get("https://stock.wespai.com/income",&error);
+        if (!result) {
+            return final_result;
+        }
+        final_result = result.value();
+//        __android_log_print(ANDROID_LOG_INFO, "lclclc", "%s",result.value().c_str()); //log i类型
+        return final_result;
+    }
 
 
 }  // namespace
 
-extern "C" JNIEXPORT jobjectArray JNICALL
-Java_com_jap_twstockinformation_MainActivity_getGerritChanges(JNIEnv* env,
-                                                       jobject /* this */,
-                                                       jstring cacert_java) {
-    if (cacert_java == nullptr) {
-        logging::FatalError(env, "cacert argument cannot be null");
-    }
 
-    const std::string cacert =
-            curlssl::jni::Convert<std::string>::from(env, cacert_java);
-
-    return jni::Convert<jobjectArray, jstring>::from(env,
-                                                     get_change_titles(cacert));
-
-}
 
 extern "C" JNIEXPORT jobject JNICALL
 Java_com_jap_twstockinformation_MainActivity_getresult(JNIEnv* env
@@ -203,7 +263,7 @@ Java_com_jap_twstockinformation_MainActivity_getresult(JNIEnv* env
 }
 
 extern "C" JNIEXPORT jobject JNICALL
-Java_com_jap_twstockinformation_StockUtil_getresult(JNIEnv* env
+Java_com_jap_twstockinformation_StockUtil_getMapNumName(JNIEnv* env
         ,jobject /* this */
         ,jstring cacert_java) {
 
@@ -228,4 +288,41 @@ Java_com_jap_twstockinformation_StockUtil_getresult(JNIEnv* env
 
 
 }
+
+extern "C" JNIEXPORT jstring JNICALL
+Java_com_jap_twstockinformation_StockUtil_getHtmlStringPrice(JNIEnv* env
+        ,jobject /* this */
+        ,jstring cacert_java) {
+        const std::string cacert = curlssl::jni::Convert<std::string>::from(env, cacert_java);
+        jstring html_string;
+        std::string a =  get_stock_price(cacert).c_str();
+        html_string = env->NewStringUTF(a.c_str()); // C style string to Java String
+        return html_string;
+    }
+
+extern "C" JNIEXPORT jstring JNICALL
+Java_com_jap_twstockinformation_StockUtil_getJsonStringFundamental(JNIEnv* env
+        ,jobject /* this */
+        ,jstring cacert_java) {
+    const std::string cacert = curlssl::jni::Convert<std::string>::from(env, cacert_java);
+    jstring html_string;
+    std::string a =  get_stock_fundamental(cacert).c_str();
+    html_string = env->NewStringUTF(a.c_str()); // C style string to Java String
+    return html_string;
+}
+
+extern "C" JNIEXPORT jstring JNICALL
+    Java_com_jap_twstockinformation_StockUtil_getHtmlStringIncome(JNIEnv* env
+            ,jobject /* this */
+            ,jstring cacert_java) {
+        const std::string cacert = curlssl::jni::Convert<std::string>::from(env, cacert_java);
+        jstring html_string;
+        std::string str =  get_stock_income(cacert);
+        char *cstr = new char[str.length() + 1];
+        strcpy(cstr, str.c_str());
+        correctUtfBytes(cstr);//newStringUTF出现input is not valid Modified UTF-8错误解决办法
+        html_string = env->NewStringUTF(cstr); // C style string to Java String
+        return html_string;
+    }
+
 }  // namespace curlssl

@@ -73,6 +73,7 @@ dependencies {
     implementation "com.android.ndk.thirdparty:curl:7.69.1-alpha-1"
     implementation "com.android.ndk.thirdparty:jsoncpp:1.8.4-alpha-1"
     implementation "com.android.ndk.thirdparty:openssl:1.1.1g-alpha-1"
+    implementation 'org.jsoup:jsoup:1.11.3'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
