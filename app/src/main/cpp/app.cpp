@@ -229,6 +229,19 @@ namespace {
 //        __android_log_print(ANDROID_LOG_INFO, "lclclc", "%s",result.value().c_str()); //log i类型
         return final_result;
     }
+    std::string get_Institutional_Investors_Ratio(const std::string & cacert_path) {
+        std::string error;
+        std::string final_result;
+        auto tmp_result = http::Client(cacert_path);
+        tmp_result.set_header("User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (K HTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36");
+        auto result = tmp_result.get("https://stock.wespai.com/p/60546",&error);
+        if (!result) {
+            return final_result;
+        }
+        final_result = result.value();
+//        __android_log_print(ANDROID_LOG_INFO, "lclclc", "%s",result.value().c_str()); //log i类型
+        return final_result;
+    }
 
 
 }  // namespace
@@ -324,5 +337,23 @@ extern "C" JNIEXPORT jstring JNICALL
         html_string = env->NewStringUTF(cstr); // C style string to Java String
         return html_string;
     }
+
+extern "C" JNIEXPORT jstring JNICALL
+Java_com_jap_twstockinformation_StockUtil_getHtmlStringInstitutionalInvestorsRatio(JNIEnv* env
+        ,jobject /* this */
+        ,jstring cacert_java) {
+    const std::string cacert = curlssl::jni::Convert<std::string>::from(env, cacert_java);
+    jstring html_string;
+    std::string str =  get_Institutional_Investors_Ratio(cacert);
+    char *cstr = new char[str.length() + 1];
+    strcpy(cstr, str.c_str());
+    correctUtfBytes(cstr);//newStringUTF出现input is not valid Modified UTF-8错误解决办法
+    html_string = env->NewStringUTF(cstr); // C style string to Java String
+    return html_string;
+}
+
+
+
+
 
 }  // namespace curlssl

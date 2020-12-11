@@ -55,8 +55,9 @@ public class StockUtil {
     public native String getHtmlStringPrice(String CACERT_PATH);
     public native String getJsonStringFundamental(String CACERT_PATH);
     public native String getHtmlStringIncome(String CACERT_PATH);
+    public native String getHtmlStringInstitutionalInvestorsRatio(String CACERT_PATH);
 
-    public HashMap<String,String> HashMap_Num_Name(){
+    public HashMap<String,String> Get_HashMap_Num_Name(){
         HashMap<String,String> result = getMapNumName(CACERT_PATH);
         HashMap<String,String> final_result = new HashMap<String, String>();
         for (String key : result.keySet()) {
@@ -69,7 +70,7 @@ public class StockUtil {
         }
         return final_result;
     }
-    public HashMap<String,HashMap<String,String>> HashMap_Num_MapPrice(){
+    public HashMap<String,HashMap<String,String>> Get_HashMap_Num_MapPrice(){
         String html_string = getHtmlStringPrice(CACERT_PATH);
         Document doc = Jsoup.parse(html_string);
         Elements e = doc.getElementsByClass("alt-row");
@@ -95,7 +96,7 @@ public class StockUtil {
         information = final_result;
         return final_result;
     }
-    public HashMap<String,HashMap<String,String>> HashMap_Num_MapFundamental(){
+    public HashMap<String,HashMap<String,String>> Get_HashMap_Num_MapFundamental(){
         String Json_String = getJsonStringFundamental(CACERT_PATH);
         HashMap<String,HashMap<String,String>> final_result = new HashMap<String, HashMap<String,String>>();
         try {
@@ -126,7 +127,7 @@ public class StockUtil {
         }
         return final_result;
     }
-    public HashMap<String,HashMap<String,String>> HashMap_Num_MapIncome(){
+    public HashMap<String,HashMap<String,String>> Get_HashMap_Num_MapIncome(){
         String html_string = getHtmlStringIncome(CACERT_PATH);
         Document doc = Jsoup.parse(html_string);
         Elements e = doc.getElementsByTag("tr");
@@ -149,6 +150,76 @@ public class StockUtil {
         }
         return final_result;
     }
+    public HashMap<String,HashMap<String,String>> Get_HashMap_Num_MapInstitutionalInvestorsRatio(){
+        String html_string = getHtmlStringInstitutionalInvestorsRatio(CACERT_PATH);
+        Document doc = Jsoup.parse(html_string);
+        Elements e = doc.getElementsByTag("tr");
+        e.remove(0);
+        HashMap<String,HashMap<String,String>> final_result = new HashMap<String, HashMap<String,String>>();
+        for (Element temp_e :e){
+            HashMap<String,String> inside_value = new HashMap<String,String>();
+//            System.out.println(temp_e.text());
+            String[] temp_list = temp_e.text().split(" ");
+            inside_value.put("DirectorsSupervisorsRatio",temp_list[2]);
+            inside_value.put("ForeignInvestmentRatio",temp_list[3]);
+            inside_value.put("InvestmentRation",temp_list[4]);
+            String ThreeBigRation = String.valueOf(Float.parseFloat(temp_list[2])+Float.parseFloat(temp_list[3])+Float.parseFloat(temp_list[4]));
+            inside_value.put("ThreeBigRation",ThreeBigRation);
+            final_result.put(temp_list[0],inside_value);
+            if(information.containsKey(temp_list[0])){
+                information.get(temp_list[0]).put("DirectorsSupervisorsRatio",temp_list[2]);
+                information.get(temp_list[0]).put("ForeignInvestmentRatio",temp_list[3]);
+                information.get(temp_list[0]).put("InvestmentRation",temp_list[4]);
+                information.get(temp_list[0]).put("ThreeBigRation",ThreeBigRation);
+            }else {
+                information.put(temp_list[0],inside_value);
+            }
+        }
+        return final_result;
+    }
 
+    /**
+     * key : 代號
+     * value schema:
+     *
+     * Name - 公司名稱
+     * Price - 股票現價
+     * UpAndDown - 漲跌
+     * UpAndDownPercent - 漲跌現價比
+     * WeekUpAndDownPercent - 周漲跌現價比
+     * HighestAndLowestPercent - 最高最低振福
+     * Open - 開盤價
+     * High - 最高價
+     * Low - 最低價
+     * DealVolume - 交易量
+     * DealTotalValue - 交易總值
+     * DividendYield - 殖利率
+     * PriceToEarningRatio - 本益比
+     * PriceBookRatio - 股價淨值比
+     * OperatingRevenue - 營業收入
+     * MoM - 「月增率」指的是跟上個月比起來增加了多少
+     * YoY - 「年增率」就是當月營收與去年同期相比的年增率
+     * DirectorsSupervisorsRatio - 董監持股比例
+     * ForeignInvestmentRatio - 外商持股比例
+     * InvestmentRation - 投信持股比例
+     * ThreeBigRation - 三大法人持股比例
+     * */
+
+
+
+    public HashMap<String,HashMap<String,String>> Get_HashMap_Num_MapTotalInformation(){
+        Get_HashMap_Num_MapPrice();
+        System.out.println("Get_HashMap_Num_MapPrice    "+information);
+        Get_HashMap_Num_MapFundamental();
+        System.out.println("Get_HashMap_Num_MapFundamental    "+information);
+
+        Get_HashMap_Num_MapIncome();
+        System.out.println("Get_HashMap_Num_MapIncome    "+information);
+
+        Get_HashMap_Num_MapInstitutionalInvestorsRatio();
+        System.out.println("Get_HashMap_Num_MapInstitutionalInvestorsRatio    "+information);
+
+        return information;
+    }
 
 }

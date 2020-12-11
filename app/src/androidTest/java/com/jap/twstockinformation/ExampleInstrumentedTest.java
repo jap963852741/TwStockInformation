@@ -38,9 +38,7 @@ public class ExampleInstrumentedTest {
     public void cpp_test() {
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         StockUtil st = new StockUtil(appContext);
-//        st.HashMap_Num_MapPrice();
-//        st.HashMap_Num_MapFundamental();
-        st.HashMap_Num_MapIncome();
+        System.out.println(st.Get_HashMap_Num_MapTotalInformation());
     }
 
 }
