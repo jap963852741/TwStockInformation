@@ -12,6 +12,7 @@ import org.junit.runner.RunWith;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import static org.junit.Assert.*;
 
@@ -38,7 +39,11 @@ public class ExampleInstrumentedTest {
     public void cpp_test() {
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         StockUtil st = new StockUtil(appContext);
-        System.out.println(st.Get_HashMap_Num_MapTotalInformation());
+//        System.out.println(st.Get_HashMap_Num_MapPrice());
+        HashMap<String, HashMap<String,String>> aa = st.Get_HashMap_Num_MapPrice();
+//        for (String key : aa.keySet()) {
+//            System.out.println(key + aa.get(key).toString());
+//        }
     }
 
 }

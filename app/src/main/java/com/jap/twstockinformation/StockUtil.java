@@ -73,11 +73,13 @@ public class StockUtil {
     public HashMap<String,HashMap<String,String>> Get_HashMap_Num_MapPrice(){
         String html_string = getHtmlStringPrice(CACERT_PATH);
         Document doc = Jsoup.parse(html_string);
-        Elements e = doc.getElementsByClass("alt-row");
+        Elements e = doc.getElementsByTag("tr");
+        e.remove(0);//代號 ▼ 名稱 ▼ 價格 ▼ 漲跌 ▼ 漲跌幅 ▼ 周漲跌 ▼ 振幅 ▼ 開盤 ▼ 最高 ▼ 最低 ▼ 昨收 ▼ 成交量 ▼ 成交值(億) ▼
+//        System.out.println(e.text());
         HashMap<String,HashMap<String,String>> final_result = new HashMap<String, HashMap<String,String>>();
         for (Element temp_e :e){
             HashMap<String,String> inside_value = new HashMap<String,String>();
-//            System.out.println(temp_e.text());
+            System.out.println(temp_e.text());
             String[] value_list = temp_e.text().split(" ");
             inside_value.put("Name",value_list[1]);
             inside_value.put("Price",value_list[2]);
@@ -192,7 +194,7 @@ public class StockUtil {
      * High - 最高價
      * Low - 最低價
      * DealVolume - 交易量
-     * DealTotalValue - 交易總值
+     * DealTotalValue - 交易總值(億)
      * DividendYield - 殖利率
      * PriceToEarningRatio - 本益比
      * PriceBookRatio - 股價淨值比
@@ -204,8 +206,6 @@ public class StockUtil {
      * InvestmentRation - 投信持股比例
      * ThreeBigRation - 三大法人持股比例
      * */
-
-
 
     public HashMap<String,HashMap<String,String>> Get_HashMap_Num_MapTotalInformation(){
         Get_HashMap_Num_MapPrice();
@@ -219,7 +219,10 @@ public class StockUtil {
         Get_HashMap_Num_MapInstitutionalInvestorsRatio();
         System.out.println("Get_HashMap_Num_MapInstitutionalInvestorsRatio    "+information);
 
+        System.out.println(information.get("2330").get("Name"));
+
         return information;
     }
+
 
 }
