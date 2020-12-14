@@ -46,7 +46,7 @@
          * High - 最高價
          * Low - 最低價
          * DealVolume - 交易量
-         * DealTotalValue - 交易總值
+         * DealTotalValue - 交易總值(億)
          * DividendYield - 殖利率
          * PriceToEarningRatio - 本益比
          * PriceBookRatio - 股價淨值比
