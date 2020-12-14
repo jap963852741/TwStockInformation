@@ -19,12 +19,12 @@
  Step 2. Add the dependency
 
 	dependencies {
-	        implementation 'com.github.jap963852741:TwStockInformation:v1.0.5'
+	        implementation 'com.github.jap963852741:TwStockInformation:v1.0.6'
 	}
   
   ## Usage
 
-     StockUtil st = new StockUtil(appContext);<br><br>
+     StockUtil st = new StockUtil(appContext);
      HashMap<String,HashMap<String,String>> example = st.Get_HashMap_Num_MapInstitutionalInvestorsRatio;
  
  ## Example
