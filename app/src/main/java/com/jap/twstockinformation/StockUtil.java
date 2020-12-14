@@ -80,7 +80,11 @@ public class StockUtil {
         for (Element temp_e :e){
             HashMap<String,String> inside_value = new HashMap<String,String>();
 //            System.out.println(temp_e.text());
-            String[] value_list = temp_e.text().split(" ");
+            String temp_text = temp_e.text();
+            if (temp_e.text().contains("元大MSCI A股")){
+                temp_text = temp_text.replace("元大MSCI A股","元大MSCI_A股");
+            }
+            String[] value_list = temp_text.split(" ");
             inside_value.put("Name",value_list[1]);
             inside_value.put("Price",value_list[2]);
             inside_value.put("UpAndDown",value_list[3]);
