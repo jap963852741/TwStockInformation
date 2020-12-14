@@ -79,7 +79,7 @@ public class StockUtil {
         HashMap<String,HashMap<String,String>> final_result = new HashMap<String, HashMap<String,String>>();
         for (Element temp_e :e){
             HashMap<String,String> inside_value = new HashMap<String,String>();
-            System.out.println(temp_e.text());
+//            System.out.println(temp_e.text());
             String[] value_list = temp_e.text().split(" ");
             inside_value.put("Name",value_list[1]);
             inside_value.put("Price",value_list[2]);
