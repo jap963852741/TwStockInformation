@@ -144,7 +144,7 @@ public class StockUtil {
             String[] temp_list = temp_e.text().split(" ");
             inside_value.put("OperatingRevenue",temp_list[2]+"000");
             inside_value.put("MoM",temp_list[3]);
-            inside_value.put("YoY",temp_list[4]);
+            inside_value.put("YoY",temp_list[5]);
             final_result.put(temp_list[0],inside_value);
             if(information.containsKey(temp_list[0])){
                 information.get(temp_list[0]).put("OperatingRevenue",temp_list[2]+"000");
