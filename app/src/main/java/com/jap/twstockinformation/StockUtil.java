@@ -149,7 +149,7 @@ public class StockUtil {
             if(information.containsKey(temp_list[0])){
                 information.get(temp_list[0]).put("OperatingRevenue",temp_list[2]+"000");
                 information.get(temp_list[0]).put("MoM",temp_list[3]);
-                information.get(temp_list[0]).put("YoY",temp_list[4]);
+                information.get(temp_list[0]).put("YoY",temp_list[5]);
             }else {
                 information.put(temp_list[0],inside_value);
             }
