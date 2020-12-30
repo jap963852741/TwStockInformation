@@ -177,6 +177,7 @@ public class StockUtil {
                 information.get(temp_list[0]).put("DirectorsSupervisorsRatio",temp_list[2]);
                 information.get(temp_list[0]).put("ForeignInvestmentRatio",temp_list[3]);
                 information.get(temp_list[0]).put("InvestmentRation",temp_list[4]);
+                information.get(temp_list[0]).put("SelfEmployedRation",temp_list[5]);
                 information.get(temp_list[0]).put("ThreeBigRation",ThreeBigRation);
             }else {
                 information.put(temp_list[0],inside_value);
