@@ -56,5 +56,6 @@
          * DirectorsSupervisorsRatio - 董監持股比例
          * ForeignInvestmentRatio - 外商持股比例
          * InvestmentRation - 投信持股比例
+	 * SelfEmployedRation - 自營商持股
          * ThreeBigRation - 三大法人持股比例
          * */
