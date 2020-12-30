@@ -169,7 +169,8 @@ public class StockUtil {
             inside_value.put("DirectorsSupervisorsRatio",temp_list[2]);
             inside_value.put("ForeignInvestmentRatio",temp_list[3]);
             inside_value.put("InvestmentRation",temp_list[4]);
-            String ThreeBigRation = String.valueOf(Float.parseFloat(temp_list[2])+Float.parseFloat(temp_list[3])+Float.parseFloat(temp_list[4]));
+            inside_value.put("SelfEmployedRation",temp_list[5]);
+            String ThreeBigRation = String.valueOf(Float.parseFloat(temp_list[3])+Float.parseFloat(temp_list[4])+Float.parseFloat(temp_list[5]));
             inside_value.put("ThreeBigRation",ThreeBigRation);
             final_result.put(temp_list[0],inside_value);
             if(information.containsKey(temp_list[0])){
@@ -208,6 +209,7 @@ public class StockUtil {
      * DirectorsSupervisorsRatio - 董監持股比例
      * ForeignInvestmentRatio - 外商持股比例
      * InvestmentRation - 投信持股比例
+     * SelfEmployedRation - 自營商持股
      * ThreeBigRation - 三大法人持股比例
      * */
 

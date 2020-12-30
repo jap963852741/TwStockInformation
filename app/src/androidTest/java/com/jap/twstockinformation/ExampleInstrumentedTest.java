@@ -40,7 +40,7 @@ public class ExampleInstrumentedTest {
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         StockUtil st = new StockUtil(appContext);
 //        System.out.println(st.Get_HashMap_Num_MapPrice());
-        HashMap<String, HashMap<String,String>> aa = st.Get_HashMap_Num_MapIncome();
+        HashMap<String, HashMap<String,String>> aa = st.Get_HashMap_Num_MapInstitutionalInvestorsRatio();
         for (String key : aa.keySet()) {
             System.out.println(key + aa.get(key).toString());
         }
