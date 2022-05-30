@@ -59,7 +59,7 @@ public class StockUtil {
 
     public HashMap<String,String> Get_HashMap_Num_Name(){
         HashMap<String,String> result = getMapNumName(CACERT_PATH);
-        HashMap<String,String> final_result = new HashMap<String, String>();
+        HashMap<String,String> final_result = new HashMap<>();
         for (String key : result.keySet()) {
             try {
                 String a_key = URLEncoder. encode(key, "UTF-8").replace("%0D%0D","");
@@ -104,7 +104,7 @@ public class StockUtil {
     }
     public HashMap<String,HashMap<String,String>> Get_HashMap_Num_MapFundamental(){
         String Json_String = getJsonStringFundamental(CACERT_PATH);
-        HashMap<String,HashMap<String,String>> final_result = new HashMap<String, HashMap<String,String>>();
+        HashMap<String,HashMap<String,String>> final_result = new HashMap<>();
         try {
             JSONObject j = new JSONObject(Json_String);
             JSONArray jsonOb = j.getJSONArray("data");
