@@ -1,7 +1,23 @@
 apply plugin: 'com.android.library'
 apply plugin: 'maven-publish'
 apply plugin: 'kotlin-android'
-
+apply plugin: 'com.github.dcendents.android-maven'
+group = 'com.github.jap963852741'
+//    version = '1.0.20'
+//
+//    afterEvaluate {
+//        publishing {
+//            publications {
+//                // Creates a Maven publication called "release".
+//                release(MavenPublication) {
+//                    from components.release
+//                    groupId = 'com.github.jap963852741'
+//                    artifactId = 'twstockinformation'
+//                    version = '1.0.20'
+//                }
+//            }
+//        }
+//    }
 android {
     compileSdkVersion 32
     buildToolsVersion "30.0.2"
@@ -39,22 +55,6 @@ android {
 //    ndkVersion '21.3.6528147'
 }
 
-group = 'com.github.jap963852741'
-version = '1.0.20'
-
-afterEvaluate {
-    publishing {
-        publications {
-            // Creates a Maven publication called "release".
-            release(MavenPublication) {
-                from components.release
-                groupId = 'com.github.jap963852741'
-                artifactId = 'twstockinformation'
-                version = '1.0.20'
-            }
-        }
-    }
-}
 
 configurations.all {
     resolutionStrategy.eachDependency { DependencyResolveDetails details ->
