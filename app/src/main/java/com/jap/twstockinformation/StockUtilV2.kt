@@ -1,6 +1,5 @@
 package com.jap.twstockinformation
 
-import android.text.TextUtils.replace
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
