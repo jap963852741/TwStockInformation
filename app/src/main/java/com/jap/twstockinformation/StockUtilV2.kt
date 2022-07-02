@@ -1,5 +1,6 @@
 package com.jap.twstockinformation
 
+import android.text.TextUtils.replace
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
@@ -14,6 +15,14 @@ import kotlin.coroutines.coroutineContext
 class StockUtilV2 {
     private var information = HashMap<String, HashMap<String, String>>()
 
+    fun String.replaceWithSpace(list: List<String>): String {
+        var result = this
+        list.forEach {
+            result = result.replace(it, "")
+        }
+        return result
+    }
+
     suspend fun getPrice(): Boolean = withContext(coroutineContext) {
         val request = Request.Builder()
             .url("https://histock.tw/stock/rank.aspx?p=all")
@@ -24,7 +33,6 @@ class StockUtilV2 {
             val doc = Jsoup.parse(result)
             val e = doc.getElementsByTag("tr")
             e.removeAt(0) //代號 ▼ 名稱 ▼ 價格 ▼ 漲跌 ▼ 漲跌幅 ▼ 周漲跌 ▼ 振幅 ▼ 開盤 ▼ 最高 ▼ 最低 ▼ 昨收 ▼ 成交量 ▼ 成交值(億) ▼
-            //        System.out.println(e.text());
             for (temp_e in e) {
                 val inside_value = HashMap<String, String>()
                 var temp_text = temp_e.text()
@@ -34,17 +42,17 @@ class StockUtilV2 {
                 val value_list = temp_text.split(" ".toRegex()).toTypedArray()
 
                 if (information.containsKey(value_list[0])) {
-                    information[value_list[0]]!!["Name"] = value_list[1]
-                    information[value_list[0]]!!["Price"] = value_list[2]
-                    information[value_list[0]]!!["UpAndDown"] = value_list[3]
-                    information[value_list[0]]!!["UpAndDownPercent"] = value_list[4]
-                    information[value_list[0]]!!["WeekUpAndDownPercent"] = value_list[5]
-                    information[value_list[0]]!!["HighestAndLowestPercent"] = value_list[6]
-                    information[value_list[0]]!!["Open"] = value_list[7]
-                    information[value_list[0]]!!["High"] = value_list[8]
-                    information[value_list[0]]!!["Low"] = value_list[9]
-                    information[value_list[0]]!!["DealVolume"] = value_list[11]
-                    information[value_list[0]]!!["DealTotalValue"] = value_list[12]
+                    information[value_list[0]]?.set("Name", value_list[1])
+                    information[value_list[0]]?.set("Price", value_list[2])
+                    information[value_list[0]]?.set("UpAndDown", value_list[3])
+                    information[value_list[0]]?.set("UpAndDownPercent", value_list[4])
+                    information[value_list[0]]?.set("WeekUpAndDownPercent", value_list[5])
+                    information[value_list[0]]?.set("HighestAndLowestPercent", value_list[6])
+                    information[value_list[0]]?.set("Open", value_list[7])
+                    information[value_list[0]]?.set("High", value_list[8])
+                    information[value_list[0]]?.set("Low", value_list[9])
+                    information[value_list[0]]?.set("DealVolume", value_list[11])
+                    information[value_list[0]]?.set("DealTotalValue", value_list[12])
                 } else {
                     inside_value["Name"] = value_list[1]
                     inside_value["Price"] = value_list[2]
@@ -80,15 +88,18 @@ class StockUtilV2 {
                 val inside_value = HashMap<String, String>()
                 val temp_object = jsonOb[i]
                 //                System.out.println(temp_object.toString());
-                val temp_list = temp_object.toString().replace("\"", "").replace("[", "").replace("]", "").split(",".toRegex()).toTypedArray()
-                inside_value["DividendYield"] = temp_list[2]
-                inside_value["PriceToEarningRatio"] = temp_list[4]
-                inside_value["PriceBookRatio"] = temp_list[5]
+                val temp_list = temp_object.toString().replaceWithSpace(listOf("\"", "[", "]")).split(",".toRegex()).toTypedArray()
+
+//                    .replace("\"", "").replace("[", "").replace("]", "")
+
                 if (information.containsKey(temp_list[0])) {
-                    information[temp_list[0]]!!["DividendYield"] = temp_list[2]
-                    information[temp_list[0]]!!["PriceToEarningRatio"] = temp_list[4]
-                    information[temp_list[0]]!!["PriceBookRatio"] = temp_list[5]
+                    information[temp_list[0]]?.set("DividendYield", temp_list[2])
+                    information[temp_list[0]]?.set("PriceToEarningRatio", temp_list[4])
+                    information[temp_list[0]]?.set("PriceBookRatio", temp_list[5])
                 } else {
+                    inside_value["DividendYield"] = temp_list[2]
+                    inside_value["PriceToEarningRatio"] = temp_list[4]
+                    inside_value["PriceBookRatio"] = temp_list[5]
                     information[temp_list[0]] = inside_value
                 }
             }
@@ -99,7 +110,7 @@ class StockUtilV2 {
         true
     }
 
-    suspend fun getIncome(): Boolean = withContext(coroutineContext){
+    suspend fun getIncome(): Boolean = withContext(coroutineContext) {
         val request = Request.Builder()
             .url("https://stock.wespai.com/income")
             .addHeader(
@@ -153,20 +164,21 @@ class StockUtilV2 {
                 val inside_value = HashMap<String, String>()
                 //            System.out.println(temp_e.text());
                 val temp_list = temp_e.text().split(" ".toRegex()).toTypedArray()
-                inside_value["DirectorsSupervisorsRatio"] = temp_list[2]
-                inside_value["ForeignInvestmentRatio"] = temp_list[3]
-                inside_value["InvestmentRation"] = temp_list[4]
-                inside_value["SelfEmployedRation"] = temp_list[5]
-                val ThreeBigRation = (temp_list[3].toFloat() + temp_list[4].toFloat() + temp_list[5].toFloat()).toString()
-                inside_value["ThreeBigRation"] = ThreeBigRation
+                val threeBigRation = (temp_list[3].toFloat() + temp_list[4].toFloat() + temp_list[5].toFloat()).toString()
+                inside_value["ThreeBigRation"] = threeBigRation
                 final_result[temp_list[0]] = inside_value
                 if (information.containsKey(temp_list[0])) {
-                    information[temp_list[0]]!!["DirectorsSupervisorsRatio"] = temp_list[2]
-                    information[temp_list[0]]!!["ForeignInvestmentRatio"] = temp_list[3]
-                    information[temp_list[0]]!!["InvestmentRation"] = temp_list[4]
-                    information[temp_list[0]]!!["SelfEmployedRation"] = temp_list[5]
-                    information[temp_list[0]]!!["ThreeBigRation"] = ThreeBigRation
+                    information[temp_list[0]]?.set("DirectorsSupervisorsRatio", temp_list[2])
+                    information[temp_list[0]]?.set("ForeignInvestmentRatio", temp_list[3])
+                    information[temp_list[0]]?.set("InvestmentRation", temp_list[4])
+                    information[temp_list[0]]?.set("SelfEmployedRation", temp_list[5])
+                    information[temp_list[0]]?.set("ThreeBigRation", threeBigRation)
                 } else {
+
+                    inside_value["DirectorsSupervisorsRatio"] = temp_list[2]
+                    inside_value["ForeignInvestmentRatio"] = temp_list[3]
+                    inside_value["InvestmentRation"] = temp_list[4]
+                    inside_value["SelfEmployedRation"] = temp_list[5]
                     information[temp_list[0]] = inside_value
                 }
             }
