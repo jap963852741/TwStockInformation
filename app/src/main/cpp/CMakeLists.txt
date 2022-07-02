@@ -6,13 +6,12 @@
 cmake_minimum_required(VERSION 3.4.1)
 
 
-
 find_package(curl REQUIRED CONFIG)
 find_package(jsoncpp REQUIRED CONFIG)
-find_library(log-lib  log)
+find_library(log-lib log)
 add_library(app
-            SHARED
-            app.cpp http.cpp logging.cpp)
+        SHARED
+        app.cpp http.cpp logging.cpp appv2.cpp)
 
 set_target_properties(app PROPERTIES CXX_STANDARD 17)
 

@@ -1,20 +1,18 @@
 package com.jap.twstockinformation;
 
+import static org.junit.Assert.assertEquals;
+
 import android.content.Context;
-import android.util.Log;
 
-import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.platform.app.InstrumentationRegistry;
 
-import org.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.io.File;
-import java.util.ArrayList;
 import java.util.HashMap;
 
-import static org.junit.Assert.*;
+import kotlinx.coroutines.GlobalScope;
 
 /**
  * Instrumented test, which will execute on an Android device.
@@ -26,7 +24,8 @@ public class ExampleInstrumentedTest {
     static {
         System.loadLibrary("app");
     }
-//    public native String getresult(String CACERT);
+
+    //    public native String getresult(String CACERT);
 //    public native ArrayList<String> getGerritChanges(String CACERT);
     @Test
     public void useAppContext() {
@@ -38,12 +37,13 @@ public class ExampleInstrumentedTest {
     @Test
     public void cpp_test() {
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        StockUtil st = new StockUtil(appContext);
-//        System.out.println(st.Get_HashMap_Num_MapPrice());
-        HashMap<String, HashMap<String,String>> aa = st.Get_HashMap_Num_MapFundamental();
-        for (String key : aa.keySet()) {
-            System.out.println(key + aa.get(key).toString());
-        }
+//        StockUtil st = new StockUtil(appContext);
+//        StockUtilV2 st = new StockUtilV2(appContext);
+//
+//        HashMap<String, HashMap<String, String>> aa = st.Get_HashMap_Num_MapTotalInformation();
+//        for (String key : aa.keySet()) {
+//            System.out.println(key + aa.get(key).toString());
+//        }
     }
 
 }

@@ -17,7 +17,7 @@ public class ExampleUnitTest {
 
     @Test
     public void curl(){
-        StockUtil st = new StockUtil();
-        st.aa();
+//        StockUtil st = new StockUtil();
+//        st.aa();
     }
 }

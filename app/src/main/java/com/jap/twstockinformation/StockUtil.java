@@ -1,8 +1,6 @@
 package com.jap.twstockinformation;
 
 import android.content.Context;
-import android.content.res.AssetManager;
-import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -13,21 +11,21 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-
+/*
+please use v2
+ */
+@Deprecated
 public class StockUtil {
     private Context context;
     private String CACERT_PATH;
-    private HashMap<String,HashMap<String,String>> information = new HashMap<String,HashMap<String,String>>();
+    public HashMap<String,HashMap<String,String>> information = new HashMap<String,HashMap<String,String>>();
     public StockUtil(Context context){
         this.context=context;
         this.CACERT_PATH =  context.getFilesDir()  + File.separator + "cacert.pem";
