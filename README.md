@@ -19,7 +19,7 @@
  Step 2. Add the dependency
 
 	dependencies {
-	        implementation 'com.github.jap963852741:TwStockInformation:v1.0.10'
+	        implementation 'com.github.jap963852741:TwStockInformation:v1.0.26'
 	}
   
   ## Usage
