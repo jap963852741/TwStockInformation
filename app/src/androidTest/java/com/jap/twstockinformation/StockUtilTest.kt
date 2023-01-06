@@ -3,7 +3,6 @@ package com.jap.twstockinformation
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import kotlinx.coroutines.runBlocking
-import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -15,20 +14,20 @@ class StockUtilTest {
     @Test
     fun useAppContext() {
         // Context of the app under test.
-        val appContext = InstrumentationRegistry.getInstrumentation().targetContext
+//        val appContext = InstrumentationRegistry.getInstrumentation().targetContext
 
         val st = StockUtilV2()
-        runBlocking {st.getPrice()}
+        runBlocking {st.getInvestorsRatio()}
         Thread.sleep(5000)
-//        println(st.information.size)
-//        st.information.forEach {
-//            println(it.toString())
-//        }
+        println(st.information.size)
+        st.information.forEach {
+            println(it.toString())
+        }
     }
 
     @Test
     fun cpp_test() {
-        val appContext = InstrumentationRegistry.getInstrumentation().targetContext
+//        val appContext = InstrumentationRegistry.getInstrumentation().targetContext
         //        StockUtil st = new StockUtil(appContext);
         val st = StockUtilV2()
         val aa = runBlocking {
@@ -38,7 +37,7 @@ class StockUtilTest {
 
         println("aa size = ${aa.size}")
         for (key in aa.keys) {
-            if (key.toString() != "2308") continue
+            if (key != "2308") continue
             println(key + aa[key].toString())
         }
     }

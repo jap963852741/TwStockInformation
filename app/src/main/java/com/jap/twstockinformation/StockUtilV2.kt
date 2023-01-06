@@ -4,7 +4,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
 import okhttp3.Request
-import org.json.JSONException
 import org.json.JSONObject
 import org.jsoup.Jsoup
 import java.util.*
@@ -12,13 +11,11 @@ import kotlin.coroutines.coroutineContext
 
 
 class StockUtilV2 {
-    private var information = HashMap<String, HashMap<String, String>>()
+    val information = HashMap<String, HashMap<String, String>>()
 
-    fun String.replaceWithSpace(list: List<String>): String {
+    private fun String.replaceWithSpace(list: List<String>): String {
         var result = this
-        list.forEach {
-            result = result.replace(it, "")
-        }
+        list.forEach { result = result.replace(it, "") }
         return result
     }
 
@@ -86,11 +83,7 @@ class StockUtilV2 {
             for (i in 0 until jsonOb.length()) {
                 val inside_value = HashMap<String, String>()
                 val temp_object = jsonOb[i]
-                //                System.out.println(temp_object.toString());
                 val temp_list = temp_object.toString().replaceWithSpace(listOf("\"", "[", "]")).split(",".toRegex()).toTypedArray()
-
-//                    .replace("\"", "").replace("[", "").replace("]", "")
-
                 if (information.containsKey(temp_list[0])) {
                     information[temp_list[0]]?.set("DividendYield", temp_list[2])
                     information[temp_list[0]]?.set("PriceToEarningRatio", temp_list[4])
@@ -102,14 +95,14 @@ class StockUtilV2 {
                     information[temp_list[0]] = inside_value
                 }
             }
-        } catch (e: JSONException) {
+        } catch (e: Exception) {
             false
             e.printStackTrace()
         }
         true
     }
 
-    suspend fun getIncome(): Boolean = withContext(coroutineContext) {
+    suspend fun getIncome() = withContext(coroutineContext) {
         val request = Request.Builder()
             .url("https://stock.wespai.com/income")
             .addHeader(
@@ -119,27 +112,30 @@ class StockUtilV2 {
             .addHeader("Accept-Language", Locale.US.language)
             .method("GET", null)
             .build()
-        val result = OkhttpWrapper.get(request)
-
-        val doc = Jsoup.parse(result?.body?.string())
-        val e = doc.getElementsByTag("tr")
-        e.removeAt(0) //title 拿掉 代號 公司 營業收入(千元) 營收月增率(%) 去年同期營收 營收年增率(%) 累計營收(千元) 去年同期累計營收(千元) 累計營收年增率(%)
-        System.out.println(e.toArray().size)
-        for (temp_e in e) {
-            val inside_value = HashMap<String, String>()
-            val temp_list = temp_e.text().split(" ".toRegex()).toTypedArray()
-            if (information.containsKey(temp_list[0])) {
-                information[temp_list[0]]!!["OperatingRevenue"] = temp_list[2] + "000"
-                information[temp_list[0]]!!["MoM"] = temp_list[3]
-                information[temp_list[0]]!!["YoY"] = temp_list[5]
-            } else {
-                inside_value["OperatingRevenue"] = temp_list[2] + "000"
-                inside_value["MoM"] = temp_list[3]
-                inside_value["YoY"] = temp_list[5]
-                information[temp_list[0]] = inside_value
+        val result = OkhttpWrapper.get(request) ?: return@withContext
+        val body = result.body ?: return@withContext
+        try {
+            val doc = Jsoup.parse(body.string())
+            val e = doc.getElementsByTag("tr")
+            e.removeAt(0) //title 拿掉 代號 公司 營業收入(千元) 營收月增率(%) 去年同期營收 營收年增率(%) 累計營收(千元) 去年同期累計營收(千元) 累計營收年增率(%)
+//            println(e.toArray().size.toString())
+            for (temp_e in e) {
+                val insideValue = HashMap<String, String>()
+                val tempList = temp_e.text().split(" ".toRegex()).toTypedArray()
+                if (information.containsKey(tempList[0])) {
+                    information[tempList[0]]!!["OperatingRevenue"] = tempList[2] + "000"
+                    information[tempList[0]]!!["MoM"] = tempList[3]
+                    information[tempList[0]]!!["YoY"] = tempList[5]
+                } else {
+                    insideValue["OperatingRevenue"] = tempList[2] + "000"
+                    insideValue["MoM"] = tempList[3]
+                    insideValue["YoY"] = tempList[5]
+                    information[tempList[0]] = insideValue
+                }
             }
+        } catch (e: Exception) {
+
         }
-        true
     }
 
 
@@ -219,7 +215,7 @@ class StockUtilV2 {
         val b = async { fundamentalJob() }
         val c = async { incomeJob() }
         val d = async { institutionalInvestorsRatioJob() }
-        println("${a.await()} ${b.await()}${c.await()} ${d.await()}")//${a.await()}
+//        println("${a.await()} ${b.await()}${c.await()} ${d.await()}")//${a.await()}
         information
     }
 
